@@ -1,50 +1,48 @@
-const upBtn = document.querySelector('.up-button')
-const downBtn = document.querySelector('.down-button')
+const board = document.querySelector('#board')
 
-const sideBar = document.querySelector('.sidebar')
+const colors = ['rgb(204, 109, 109)', 'rgb(204, 198, 109)', 'rgb(117, 204, 109)', 'rgb(109, 185, 204)', 'rgb(109, 96, 223)', 'rgb(162, 96, 223)', 'rgb(223, 96, 223)']
 
-const container = document.querySelector('.container')
+const SQUARES_NUMBER = 500;
 
-const mainSlide = document.querySelector('.main-slide')
+const aud = new Audio();
+aud.src = 'https://www.winhistory.de/more/winstart/down/owfw311.wav'
 
-const slideCount = mainSlide.querySelectorAll('div').length
+for (let i = 0; i < SQUARES_NUMBER; i++) {
+    const square = document.createElement('div')
+    square.classList.add('square')
 
-sideBar.style.top = `-${(slideCount - 1) * 100}vh`
+    square.addEventListener('mouseover', () => {
+        console.log('dadada')
+        setColor(square)
+        aud.play();
+    })
 
-let activeSlideIndex = 0
+    square.addEventListener('mouseleave', () => {
+        removeColor(square)
 
-upBtn.addEventListener('click', () => {
-    changeSlide('up')
-})
+        aud.stop();
+    })
 
-downBtn.addEventListener('click', () => {
-    changeSlide('down')
-})
+    board.append(square)
+}
 
-document.addEventListener('keydown', event => {
-    console.log(event.key)
-    if (event.key === 'ArrowUp') {
-        changeSlide('up')
-    } else if (event.key === 'ArrowDown') {
-        changeSlide('down')
-    }
-})
+HTMLAudioElement.prototype.stop = function () {
+    this.pause();
+    this.currentTime = 0.0;
+}
 
-function changeSlide(direction) {
-    if (direction === 'down') {
-        activeSlideIndex++
-        if (activeSlideIndex === slideCount) {
-            activeSlideIndex = 0
-        }
-    } else if (direction === 'up') {
-        activeSlideIndex--
-        if (activeSlideIndex < 0) {
-            activeSlideIndex = slideCount - 1
-        }
-    }
+function setColor(element) {
+    const color = getRandomColor()
+    element.style.backgroundColor = color
+    element.style.boxShadow = `0 0 2px ${color}, 0 0 10px ${color}`
+}
 
-    const height = container.clientHeight
+function removeColor(element) {
+    element.style.backgroundColor = '#1d1d1d'
+    element.style.boxShadow = `0 0 2px black`
+}
 
-    mainSlide.style.transform = `translateY(-${activeSlideIndex * height}px)`
-    sideBar.style.transform = `translateY(${activeSlideIndex * height}px)`
+function getRandomColor() {
+    const random = Math.floor(Math.random() * colors.length)
+    return colors[random]
 }
